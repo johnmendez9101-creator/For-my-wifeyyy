@@ -109,9 +109,9 @@ button:hover {
 
   <div class="card">
     <h2>So… 😳</h2>
-    <p>Will you be my Valentine?</p>
+    <p>Will you be my Valentines Ms.Laniog??</p>
     <button id="yesBtn" disabled>YES 💙</button>
-    <button id="noBtn">NO 🙈</button>
+    <button id="noBtn">NOO:< 🙈</button>
     <div id="finalMsg"></div>
   </div>
 
@@ -128,7 +128,7 @@ button:hover {
 <script>
 let heartsPopped = 0;
 const totalHearts = 10;
-const messages = ["Cute!", "Pretty!", "Love!", "Adorable!", "Flirty!", "Sweet!", "Lovely!", "Mine!", "Heart!", "💙"];
+const messages = ["bleehhhh!", "iloveeyouuu!", "mikaaa!", "mwaahhhhh!", "nyeeenyeeeee!", "Sweet!", "Lovely!", "Mine!", "imissyouuu!", "💙"];
 const scoreDisplay = document.getElementById("score");
 const instructions = document.getElementById("instructions");
 const yesBtn = document.getElementById("yesBtn");
@@ -200,16 +200,17 @@ noBtn.addEventListener("mouseenter", () => {
   noBtn.style.top = y + "px";
 
   let yesScale = parseFloat(getComputedStyle(yesBtn).transform.match(/matrix.*\((.+)\)/)?.[1].split(',')[0]) || 1;
-  yesScale = Math.min(yesScale + 0.05, 1.5);
+  yesScale = Math.min(yesScale + 0.55, 3.5);
   yesBtn.style.transform = `scale(${yesScale})`;
 });
 
 // YES BUTTON FINAL CLICK
 yesBtn.addEventListener("click", () => {
-  finalMsg.innerHTML = "<h3>YAY! 💌 You are my Valentine 😽💙</h3>";
+  finalMsg.innerHTML = "<h3>YAY!! 💌 You are my Valentines mwehhehehhe set the date FEB 14!! 😽💙</h3>";
   for (let i=0; i<15; i++) spawnHeart();
 });
 </script>
 
 </body>
 </html>
+
