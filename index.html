@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Will You Be My Valentine? 💙</title>
+<title>Will You Be My Valentine Ms.Laniog? 💙</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 
 <style>
 body {
@@ -51,9 +51,7 @@ button {
   margin: 10px;
   transition: transform 0.2s, font-size 0.2s;
 }
-button:hover {
-  background: #2b8de5;
-}
+button:hover { background: #2b8de5; }
 
 #noBtn { position: relative; }
 #yesBtn { transition: transform 0.3s ease, font-size 0.3s ease; }
@@ -70,6 +68,7 @@ button:hover {
   margin: 10px;
 }
 
+/* POP MESSAGES */
 .popMessage {
   position: absolute;
   color: #ff5e78;
@@ -83,6 +82,50 @@ button:hover {
   0% { transform: translateY(0); opacity:1; }
   100% { transform: translateY(-80px); opacity:0; }
 }
+
+/* POPUP MESSAGE */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.popup.hidden { display: none; }
+
+.popup-content {
+  background: #fff;
+  padding: 45px;
+  border-radius: 25px;
+  max-width: 750px;
+  font-family: 'Dancing Script', cursive;
+  font-size: 2.6rem;
+  line-height: 1.4;
+  color: #1e6fa3;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  animation: popupIn 0.7s ease forwards;
+}
+@keyframes popupIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* PETALS */
+.petal {
+  position: fixed;
+  top: -20px;
+  font-size: 24px;
+  animation: fall linear forwards;
+  pointer-events: none;
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
 </style>
 </head>
 
@@ -92,7 +135,6 @@ button:hover {
 
 <div class="container">
 
-  <!-- 3 GIFS -->
   <div class="gifs">
     <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif">
     <img src="https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif">
@@ -104,7 +146,7 @@ button:hover {
 
   <div class="card">
     <h2>Mini-Game: Pop the Hearts 💘</h2>
-    <p>Click hearts as they appear! Playful messages await. 🎉</p>
+    <p>Click hearts as they appear! Playful messages await 🎉</p>
   </div>
 
   <div class="card">
@@ -115,6 +157,16 @@ button:hover {
     <div id="finalMsg"></div>
   </div>
 
+</div>
+
+<!-- POPUP -->
+<div id="popupMessage" class="popup hidden">
+  <div class="popup-content">
+    It all started with a bookmark…<br><br>
+    Now in this chapter of my life,<br>
+    <strong>you’re my most special part.</strong><br><br>
+    iloveyouu lots Mika!! 💙💌
+  </div>
 </div>
 
 <audio id="bgMusic" loop>
@@ -129,25 +181,24 @@ button:hover {
 let heartsPopped = 0;
 const totalHearts = 10;
 const messages = ["bleehhhh!", "iloveeyouuu!", "mikaaa!", "mwaahhhhh!", "nyeeenyeeeee!", "Sweet!", "Lovely!", "Mine!", "imissyouuu!", "💙"];
+
 const scoreDisplay = document.getElementById("score");
 const instructions = document.getElementById("instructions");
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 const finalMsg = document.getElementById("finalMsg");
-
 const bgMusic = document.getElementById("bgMusic");
 const popSound = document.getElementById("popSound");
 
-// START MUSIC ON FIRST CLICK
+// MUSIC
 document.body.addEventListener("click", () => {
   bgMusic.volume = 0.5;
   bgMusic.play().catch(()=>{});
-}, {once:true});
+}, { once:true });
 
-// SPAWN HEARTS AT INTERVALS
+// HEART SPAWN
 function spawnHeart() {
   const heart = document.createElement("div");
-  heart.className = "heart";
   heart.textContent = "💙";
   heart.style.position = "fixed";
   heart.style.left = Math.random() * (window.innerWidth - 40) + "px";
@@ -169,48 +220,58 @@ function spawnHeart() {
     }
   });
 
-  // Remove if not clicked after 5s
   setTimeout(() => heart.remove(), 5000);
 }
 
-// POP MESSAGE FUNCTION
-function spawnPopMessage(element) {
+function spawnPopMessage(el) {
   const msg = document.createElement("div");
   msg.className = "popMessage";
-  msg.innerText = messages[Math.floor(Math.random() * messages.length)];
-  const rect = element.getBoundingClientRect();
-  msg.style.left = rect.left + "px";
-  msg.style.top = rect.top + "px";
+  msg.innerText = messages[Math.floor(Math.random()*messages.length)];
+  const r = el.getBoundingClientRect();
+  msg.style.left = r.left + "px";
+  msg.style.top = r.top + "px";
   document.body.appendChild(msg);
   setTimeout(() => msg.remove(), 1000);
 }
 
-// HEART INTERVAL
 setInterval(spawnHeart, 1200);
 
-// NO BUTTON RUNS AWAY & SHRINKS
+// NO BUTTON
 noBtn.addEventListener("mouseenter", () => {
-  let scale = parseFloat(getComputedStyle(noBtn).transform.match(/matrix.*\((.+)\)/)?.[1].split(',')[0]) || 1;
-  scale = Math.max(scale - 0.1, 0.3);
-  noBtn.style.transform = `scale(${scale})`;
-  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  noBtn.style.left = Math.random()*window.innerWidth + "px";
+  noBtn.style.top = Math.random()*window.innerHeight + "px";
   noBtn.style.position = "absolute";
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-
-  let yesScale = parseFloat(getComputedStyle(yesBtn).transform.match(/matrix.*\((.+)\)/)?.[1].split(',')[0]) || 1;
-  yesScale = Math.min(yesScale + 0.55, 3.5);
-  yesBtn.style.transform = `scale(${yesScale})`;
+  yesBtn.style.transform = "scale(3)";
 });
 
-// YES BUTTON FINAL CLICK
+// PETALS
+function spawnPetal() {
+  const p = document.createElement("div");
+  p.className = "petal";
+  p.textContent = "🌸";
+  p.style.left = Math.random()*window.innerWidth + "px";
+  p.style.animationDuration = (4 + Math.random()*3) + "s";
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),7000);
+}
+
+// YES CLICK
 yesBtn.addEventListener("click", () => {
-  finalMsg.innerHTML = "<h3>YAY!! 💌 You are my Valentines mwehhehehhe set the date FEB 14!! 😽💙</h3>";
-  for (let i=0; i<15; i++) spawnHeart();
+  finalMsg.innerHTML = "<h3>YAY!! 💌 You are my Valentines 😽💙</h3>";
+  for(let i=0;i<15;i++) spawnHeart();
+
+  setTimeout(() => {
+    document.getElementById("popupMessage").classList.remove("hidden");
+  }, 1500);
+
+  setInterval(spawnPetal, 400);
+});
+
+// CLOSE POPUP
+document.getElementById("popupMessage").addEventListener("click", () => {
+  document.getElementById("popupMessage").classList.add("hidden");
 });
 </script>
 
 </body>
 </html>
-
