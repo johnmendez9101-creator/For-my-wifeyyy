@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You Be My Valentine? 💙</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #b8e8ff, #e6f6ff);
+  font-family: 'Quicksand', sans-serif;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 3rem;
+  color: #1e6fa3;
+  margin-top: 20px;
+  text-shadow: 1px 1px 3px #8fc1ff;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 25px;
+  padding: 25px;
+  margin: 30px 0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+button {
+  background: #4da3ff;
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin: 10px;
+  transition: transform 0.2s, font-size 0.2s;
+}
+button:hover {
+  background: #2b8de5;
+}
+
+#noBtn { position: relative; }
+#yesBtn { transition: transform 0.3s ease, font-size 0.3s ease; }
+
+#score, #instructions {
+  font-size: 1.4rem;
+  color: #1e6fa3;
+  margin-top: 15px;
+}
+
+.gifs img {
+  width: 160px;
+  border-radius: 20px;
+  margin: 10px;
+}
+
+.popMessage {
+  position: absolute;
+  color: #ff5e78;
+  font-weight: bold;
+  pointer-events: none;
+  animation: rise 1s forwards;
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 3px white;
+}
+@keyframes rise {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(-80px); opacity:0; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>Will You Be My Valentine? 💙</h1>
+
+<div class="container">
+
+  <!-- 3 GIFS -->
+  <div class="gifs">
+    <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif">
+    <img src="https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif">
+    <img src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif">
+  </div>
+
+  <div id="instructions">Pop 10 hearts to unlock the YES button! 💙</div>
+  <div id="score">Hearts popped: 0</div>
+
+  <div class="card">
+    <h2>Mini-Game: Pop the Hearts 💘</h2>
+    <p>Click hearts as they appear! Playful messages await. 🎉</p>
+  </div>
+
+  <div class="card">
+    <h2>So… 😳</h2>
+    <p>Will you be my Valentine?</p>
+    <button id="yesBtn" disabled>YES 💙</button>
+    <button id="noBtn">NO 🙈</button>
+    <div id="finalMsg"></div>
+  </div>
+
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="popSound">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_2c58c5b6e4.mp3">
+</audio>
+
+<script>
+let heartsPopped = 0;
+const totalHearts = 10;
+const messages = ["Cute!", "Pretty!", "Love!", "Adorable!", "Flirty!", "Sweet!", "Lovely!", "Mine!", "Heart!", "💙"];
+const scoreDisplay = document.getElementById("score");
+const instructions = document.getElementById("instructions");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const finalMsg = document.getElementById("finalMsg");
+
+const bgMusic = document.getElementById("bgMusic");
+const popSound = document.getElementById("popSound");
+
+// START MUSIC ON FIRST CLICK
+document.body.addEventListener("click", () => {
+  bgMusic.volume = 0.5;
+  bgMusic.play().catch(()=>{});
+}, {once:true});
+
+// SPAWN HEARTS AT INTERVALS
+function spawnHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.textContent = "💙";
+  heart.style.position = "fixed";
+  heart.style.left = Math.random() * (window.innerWidth - 40) + "px";
+  heart.style.top = Math.random() * (window.innerHeight - 40) + "px";
+  heart.style.fontSize = (24 + Math.random() * 20) + "px";
+  document.body.appendChild(heart);
+
+  heart.addEventListener("click", () => {
+    popSound.currentTime = 0;
+    popSound.play();
+    heartsPopped++;
+    scoreDisplay.innerText = `Hearts popped: ${heartsPopped}`;
+    spawnPopMessage(heart);
+    heart.remove();
+
+    if (heartsPopped >= totalHearts) {
+      yesBtn.disabled = false;
+      instructions.innerText = "You unlocked the YES button! 💘";
+    }
+  });
+
+  // Remove if not clicked after 5s
+  setTimeout(() => heart.remove(), 5000);
+}
+
+// POP MESSAGE FUNCTION
+function spawnPopMessage(element) {
+  const msg = document.createElement("div");
+  msg.className = "popMessage";
+  msg.innerText = messages[Math.floor(Math.random() * messages.length)];
+  const rect = element.getBoundingClientRect();
+  msg.style.left = rect.left + "px";
+  msg.style.top = rect.top + "px";
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 1000);
+}
+
+// HEART INTERVAL
+setInterval(spawnHeart, 1200);
+
+// NO BUTTON RUNS AWAY & SHRINKS
+noBtn.addEventListener("mouseenter", () => {
+  let scale = parseFloat(getComputedStyle(noBtn).transform.match(/matrix.*\((.+)\)/)?.[1].split(',')[0]) || 1;
+  scale = Math.max(scale - 0.1, 0.3);
+  noBtn.style.transform = `scale(${scale})`;
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  noBtn.style.position = "absolute";
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+
+  let yesScale = parseFloat(getComputedStyle(yesBtn).transform.match(/matrix.*\((.+)\)/)?.[1].split(',')[0]) || 1;
+  yesScale = Math.min(yesScale + 0.05, 1.5);
+  yesBtn.style.transform = `scale(${yesScale})`;
+});
+
+// YES BUTTON FINAL CLICK
+yesBtn.addEventListener("click", () => {
+  finalMsg.innerHTML = "<h3>YAY! 💌 You are my Valentine 😽💙</h3>";
+  for (let i=0; i<15; i++) spawnHeart();
+});
+</script>
+
+</body>
+</html>
